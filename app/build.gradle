@@ -1,0 +1,82 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.0"
+    buildFeatures {
+        viewBinding true
+    }
+    defaultConfig {
+        applicationId "ru.skillbranch.skillarticles"
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            buildConfigField("String", "BASE_URL", "\"https://sandbox.skill-branch.ru\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://sandbox.skill-branch.ru\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        // Sets Java compatibility to Java 8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation "androidx.appcompat:appcompat:${versions_androidx_appcompat}"
+    implementation "androidx.recyclerview:recyclerview:${versions_androidx_recyclerview}"
+    implementation "androidx.cardview:cardview:${versions_androidx_cardview}"
+    implementation "androidx.fragment:fragment-ktx:${versions_fragment}"
+    //Room
+    implementation "androidx.room:room-runtime:${versions_room}"
+    annotationProcessor "androidx.room:room-compiler:${versions_room}"
+    implementation "androidx.room:room-testing:${versions_room}"
+    implementation "androidx.room:room-ktx:${versions_room}"
+    //Networking
+    implementation "com.squareup.retrofit2:retrofit:${versions_retrofit}"
+    implementation "com.squareup.retrofit2:converter-gson:${versions_retrofit}"
+    implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
+    implementation "com.squareup.okhttp3:logging-interceptor:${versions_okhttp_logging_interceptor}"
+    // rx
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
+    // delegate
+    implementation 'com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.0'
+    implementation 'com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding:4.3.0'
+    // DI
+    implementation "org.koin:koin-androidx-scope:${koin_version}"
+    implementation "org.koin:koin-androidx-viewmodel:${koin_version}"
+    // image loader
+    implementation("io.coil-kt:coil:1.0.0")
+    // test
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+}

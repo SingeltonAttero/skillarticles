@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.repository
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.ReplaySubject
@@ -23,7 +24,7 @@ class DishesRepository(private val api: DeliveryApi) : DishesRepositoryContract 
             }
 
 
-    override fun getCachedDishes(): Single<List<Dish>> {
-        return cachedDishes.hide().take(1).singleOrError()
+    override fun getCachedDishes(): Observable<List<Dish>> {
+        return cachedDishes.hide()
     }
 }

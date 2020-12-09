@@ -25,6 +25,6 @@ class MainViewModel(
                 action.value = newState
             }, {
                 it.printStackTrace()
-            })
+            }).track()
     }
 }

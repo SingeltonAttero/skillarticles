@@ -3,6 +3,7 @@ package ru.skillbranch.skillarticles.di
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ru.skillbranch.skillarticles.core.ResourceManager
+import ru.skillbranch.skillarticles.domain.SearchUseCase
 import ru.skillbranch.skillarticles.repository.DishesRepository
 import ru.skillbranch.skillarticles.repository.DishesRepositoryContract
 import ru.skillbranch.skillarticles.repository.http.client.DeliveryRetrofitProvider
@@ -15,11 +16,12 @@ object AppModule {
         single { DeliveryRetrofitProvider.createRetrofit() }
         single<DishesRepositoryContract> { DishesRepository(api = get()) }
         single { ResourceManager(context = get()) }
+        single { SearchUseCase(get()) }
         single { DishesMapper() }
     }
 
     fun viewModelModule() = module {
-        viewModel { MainViewModel(repository = get()) }
-        viewModel { SearchViewModel(repository = get()) }
+        viewModel { MainViewModel(repository = get(), mapper = get()) }
+        viewModel { SearchViewModel(useCase = get(), mapper = get()) }
     }
 }

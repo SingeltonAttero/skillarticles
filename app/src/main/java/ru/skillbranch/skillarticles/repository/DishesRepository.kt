@@ -5,6 +5,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.ReplaySubject
+import ru.skillbranch.skillarticles.repository.error.EmptyDishesError
 import ru.skillbranch.skillarticles.repository.http.DeliveryApi
 import ru.skillbranch.skillarticles.repository.http.client.DeliveryRetrofitProvider
 import ru.skillbranch.skillarticles.repository.models.Dish
@@ -16,7 +17,8 @@ class DishesRepository(private val api: DeliveryApi) : DishesRepositoryContract 
 
     override fun getDishes(): Single<List<Dish>> =
         api.refreshToken(RefreshToken(DeliveryRetrofitProvider.REFRESH_TOKEN))
-            .flatMap { api.getDishes(0, 100, "${DeliveryRetrofitProvider.BEARER} ${it.accessToken}") }
+            .flatMap { api.getDishes(0, 1000, "${DeliveryRetrofitProvider.BEARER} ${it.accessToken}") }
+            .flatMap { if (it.isEmpty()) Single.error(EmptyDishesError("Список пуст $it")) else Single.just(it) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { dishes: List<Dish> ->

@@ -37,7 +37,6 @@ class SearchViewModel(
             .distinctUntilChanged()
             .switchMap { useCase.findDishesByName(it) }
             .map { mapper.mapDtoToState(it) }
-            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 val oldState = action.value ?: defaultState
@@ -45,7 +44,7 @@ class SearchViewModel(
                 action.value = newState
             }, {
                 it.printStackTrace()
-            })
+            }).track()
 
     }
 

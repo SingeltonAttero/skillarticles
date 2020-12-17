@@ -3,8 +3,8 @@ package ru.skillbranch.skillarticles.ui.main
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import io.reactivex.rxjava3.subjects.AsyncSubject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.core.adapter.ProductDelegate
@@ -40,11 +40,23 @@ class MainFragment : Fragment() {
         setHasOptionsMenu(true)
         binding.rvProductGrid.adapter = productAdapter
         binding.rvProductGrid.addItemDecoration(GridPaddingItemDecoration(17))
+        binding.btnRetry.setOnClickListener {
+            viewModel.loadDishes()
+        }
     }
 
     private fun renderState(state: MainState) {
-        productAdapter.items = state.productItems
-        productAdapter.notifyDataSetChanged()
+        binding.progressProduct.isVisible = state == MainState.Loader
+        binding.rvProductGrid.isVisible = state is MainState.Result
+        binding.toolbar.isVisible = state is MainState.Result
+        binding.tvErrorMessage.isVisible = state is MainState.Error
+        binding.btnRetry.isVisible = state is MainState.Error
+        if (state is MainState.Result) {
+            productAdapter.items = state.productItems
+            productAdapter.notifyDataSetChanged()
+        } else if (state is MainState.Error) {
+            binding.tvErrorMessage.text = state.message
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

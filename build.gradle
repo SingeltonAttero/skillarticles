@@ -10,6 +10,7 @@ buildscript {
     ext.versions_room = "2.2.5"
     ext.versions_retrofit = "2.7.0"
     ext.versions_okhttp_logging_interceptor = "3.12.0"
+    ext.room_version = "2.2.6"
     repositories {
         google()
         jcenter()

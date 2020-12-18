@@ -20,8 +20,10 @@ class App : Application() {
             modules(
                 listOf(
                     AppModule.appModule(),
-                    AppModule.viewModelModule()
-                )
+                    AppModule.databaseModule(),
+                    AppModule.viewModelModule(),
+
+                    )
             )
         }
     }

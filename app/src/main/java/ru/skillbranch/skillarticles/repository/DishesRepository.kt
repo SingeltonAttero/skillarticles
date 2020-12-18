@@ -1,32 +1,38 @@
 package ru.skillbranch.skillarticles.repository
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.ReplaySubject
-import ru.skillbranch.skillarticles.repository.error.EmptyDishesError
+import ru.skillbranch.skillarticles.domain.entity.DishEntity
+import ru.skillbranch.skillarticles.repository.database.dao.DishesDao
+import ru.skillbranch.skillarticles.repository.database.entity.DishPersistEntity
 import ru.skillbranch.skillarticles.repository.http.DeliveryApi
 import ru.skillbranch.skillarticles.repository.http.client.DeliveryRetrofitProvider
+import ru.skillbranch.skillarticles.repository.mapper.DishesMapper
 import ru.skillbranch.skillarticles.repository.models.Dish
 import ru.skillbranch.skillarticles.repository.models.RefreshToken
 
-class DishesRepository(private val api: DeliveryApi) : DishesRepositoryContract {
+class DishesRepository(
+    private val api: DeliveryApi,
+    private val mapper: DishesMapper,
+    private val dishesDao: DishesDao
+) : DishesRepositoryContract {
 
-    private val cachedDishes = ReplaySubject.create<List<Dish>>()
-
-    override fun getDishes(): Single<List<Dish>> =
+    override fun getDishes(): Single<List<DishEntity>> =
         api.refreshToken(RefreshToken(DeliveryRetrofitProvider.REFRESH_TOKEN))
             .flatMap { api.getDishes(0, 1000, "${DeliveryRetrofitProvider.BEARER} ${it.accessToken}") }
-            .flatMap { if (it.isEmpty()) Single.error(EmptyDishesError("Список пуст $it")) else Single.just(it) }
+            .doOnSuccess { dishes: List<Dish> ->
+                val savePersistDishes: List<DishPersistEntity> = mapper.mapDtoToPersist(dishes)
+                dishesDao.insertDishes(savePersistDishes)
+            }
+            .map { mapper.mapDtoToEntity(it) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess { dishes: List<Dish> ->
-                cachedDishes.onNext(dishes)
-            }
 
 
-    override fun getCachedDishes(): Observable<List<Dish>> {
-        return cachedDishes.hide()
+    override fun getCachedDishes(): Single<List<DishEntity>> {
+        return dishesDao.getAllDishes().map { mapper.mapPersistToEntity(it) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 }

@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
@@ -63,6 +64,10 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:${versions_retrofit}"
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
     implementation "com.squareup.okhttp3:logging-interceptor:${versions_okhttp_logging_interceptor}"
+    // Database
+    implementation "androidx.room:room-runtime:2.3.0-alpha04"
+    implementation "androidx.room:room-rxjava3:2.3.0-alpha04"
+    kapt "androidx.room:room-compiler:2.3.0-alpha04"
     // rx
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.0'

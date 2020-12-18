@@ -1,10 +1,9 @@
 package ru.skillbranch.skillarticles.repository
 
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import ru.skillbranch.skillarticles.repository.models.Dish
+import ru.skillbranch.skillarticles.domain.entity.DishEntity
 
 interface DishesRepositoryContract {
-    fun getDishes(): Single<List<Dish>>
-    fun getCachedDishes(): Observable<List<Dish>>
+    fun getDishes(): Single<List<DishEntity>>
+    fun getCachedDishes(): Single<List<DishEntity>>
 }

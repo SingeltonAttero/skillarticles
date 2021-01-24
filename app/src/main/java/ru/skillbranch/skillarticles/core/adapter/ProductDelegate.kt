@@ -17,15 +17,16 @@ class ProductDelegate {
         adapterDelegateViewBinding<ProductItemState, ProductItemState, ItemProductBinding>({ layoutInflater, parent ->
             ItemProductBinding.inflate(layoutInflater, parent, false)
         }) {
-            itemView.setOnClickListener { addClick.invoke(item) }
+            binding.btnAddBasket.setOnClickListener { addClick.invoke(item) }
             bind {
                 binding.tvPrice.text = item.price
                 binding.tvTitle.text = item.title
                 binding.ivProductPhoto.load(item.image) {
                     error(R.drawable.img_empty_place_holder)
-                    placeholder(R.drawable.img_empty_place_holder)
                     listener(onError = { _, _ ->
                         binding.ivProductPhoto.setPadding(48)
+                    }, onStart = {
+                        binding.ivProductPhoto.setPadding(0)
                     })
                 }
             }

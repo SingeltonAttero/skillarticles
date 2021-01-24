@@ -2,6 +2,7 @@ package ru.skillbranch.skillarticles.repository.http
 
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.*
+import ru.skillbranch.skillarticles.repository.models.Category
 import ru.skillbranch.skillarticles.repository.models.Dish
 import ru.skillbranch.skillarticles.repository.models.RefreshToken
 import ru.skillbranch.skillarticles.repository.models.Token
@@ -18,4 +19,14 @@ interface DeliveryApi {
         @Query("limit") limit: Int,
         @Header("Authorization") token: String
     ): Single<List<Dish>>
+
+    @GET("categories")
+    @Headers("If-Modified-Since: Mon, 1 Jun 2020 08:00:00 GMT")
+    fun getCategories(
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int,
+        @Header("Authorization") token: String
+    ): Single<List<Category>>
+
+
 }

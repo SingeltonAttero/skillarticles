@@ -9,7 +9,7 @@ import com.jakewharton.rxbinding4.appcompat.queryTextChanges
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.skillbranch.skillarticles.core.adapter.ProductDelegate
 import ru.skillbranch.skillarticles.core.decor.GridPaddingItemDecoration
-import ru.skillbranch.skillarticles.databinding.SearchFragmentBinding
+import ru.skillbranch.skillarticles.databinding.FragmentSearchBinding
 
 class SearchFragment : Fragment() {
     companion object {
@@ -17,7 +17,7 @@ class SearchFragment : Fragment() {
     }
 
     private val viewModel: SearchViewModel by viewModel()
-    private var _binding: SearchFragmentBinding? = null
+    private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private val adapter by lazy {
         ProductDelegate().createAdapter {
@@ -26,12 +26,13 @@ class SearchFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = SearchFragmentBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.initState()
         viewModel.state.observe(viewLifecycleOwner, ::renderState)
         binding.rvProductGrid.adapter = adapter
         binding.rvProductGrid.addItemDecoration(GridPaddingItemDecoration(17))
@@ -42,6 +43,7 @@ class SearchFragment : Fragment() {
     private fun renderState(searchState: SearchState) {
         adapter.items = searchState.items
         adapter.notifyDataSetChanged()
+
     }
 
     override fun onDestroyView() {

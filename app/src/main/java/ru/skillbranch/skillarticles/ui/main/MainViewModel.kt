@@ -3,13 +3,19 @@ package ru.skillbranch.skillarticles.ui.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ru.skillbranch.skillarticles.core.BaseViewModel
+import ru.skillbranch.skillarticles.core.adapter.ProductItemState
+import ru.skillbranch.skillarticles.core.notifier.BasketNotifier
+import ru.skillbranch.skillarticles.core.notifier.event.BasketEvent
 import ru.skillbranch.skillarticles.repository.DishesRepositoryContract
 import ru.skillbranch.skillarticles.repository.error.EmptyDishesError
+import ru.skillbranch.skillarticles.repository.mapper.CategoriesMapper
 import ru.skillbranch.skillarticles.repository.mapper.DishesMapper
 
 class MainViewModel(
     private val repository: DishesRepositoryContract,
-    private val mapper: DishesMapper
+    private val dishesMapper: DishesMapper,
+    private val categoriesMapper: CategoriesMapper,
+    private val notifier: BasketNotifier
 ) : BaseViewModel() {
 
     private val defaultState = MainState.Loader
@@ -24,9 +30,10 @@ class MainViewModel(
     fun loadDishes() {
         repository.getDishes()
             .doOnSubscribe { action.value = defaultState }
-            .map { dishes -> mapper.mapDtoToState(dishes) }
+            .flatMap { dishes -> repository.getCategories().map { it to dishes } }
+            .map { categoriesMapper.mapDtoToState(it.first) to dishesMapper.mapDtoToState(it.second) }
             .subscribe({
-                val newState = MainState.Result(it)
+                val newState = MainState.Result(it.second, it.first)
                 action.value = newState
             }, {
                 if (it is EmptyDishesError) {
@@ -36,5 +43,9 @@ class MainViewModel(
                 }
                 it.printStackTrace()
             }).track()
+    }
+
+    fun handleAddBasket(item: ProductItemState) {
+        notifier.putDishes(BasketEvent.AddDish(item.id, item.title, item.price))
     }
 }

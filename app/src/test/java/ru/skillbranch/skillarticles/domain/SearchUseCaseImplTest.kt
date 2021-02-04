@@ -13,7 +13,6 @@ import ru.skillbranch.skillarticles.repository.DishesRepositoryContract
 import java.util.*
 
 class SearchUseCaseImplTest {
-
     private val repository = mock<DishesRepositoryContract>()
     private lateinit var useCase: SearchUseCase
 
@@ -24,7 +23,13 @@ class SearchUseCaseImplTest {
 
     @Test
     fun `when user input search text when return actual dishes`() {
-        whenever(repository.findDishesByName(any())).thenReturn(Observable.just(MockDataHolder.listDishes))
+        whenever(repository.findDishesByName(any())).thenReturn(Observable.just(MockDataHolder.listDishes.filter {
+            it.title.toLowerCase(Locale.ROOT).contains(
+                "Чак".trim().toLowerCase(
+                    Locale.ROOT
+                )
+            )
+        }))
         val actualList = MockDataHolder.listDishes.filter {
             it.title.toLowerCase(Locale.ROOT).contains(
                 "Чак".trim().toLowerCase(
@@ -39,14 +44,21 @@ class SearchUseCaseImplTest {
 
     @Test
     fun `when user input search text when return actual size or order dishes`() {
-        whenever(repository.findDishesByName(any())).thenReturn(Observable.just(MockDataHolder.listDishes.sortedBy { it.title }))
-        val actualList = MockDataHolder.listDishes.filter {
+        whenever(repository.findDishesByName(any())).thenReturn(Observable.just(MockDataHolder.listDishes.sortedBy { it.title }
+            .filter {
+                it.title.toLowerCase(Locale.ROOT).contains(
+                    "Мясная".trim().toLowerCase(
+                        Locale.ROOT
+                    )
+                )
+            }))
+        val actualList = MockDataHolder.listDishes.sortedBy { it.title }.filter {
             it.title.toLowerCase(Locale.ROOT).contains(
                 "Мясная".trim().toLowerCase(
                     Locale.ROOT
                 )
             )
-        }.sortedBy { it.title }
+        }
         useCase.findDishesByName("Мясная").test()
             .assertNoErrors()
             .assertResult(actualList)
@@ -57,7 +69,14 @@ class SearchUseCaseImplTest {
 
     @Test
     fun `when user input search text when return actual size or drop`() {
-        whenever(repository.findDishesByName(any())).thenReturn(Observable.just(MockDataHolder.listDishes.sortedBy { it.title }))
+        whenever(repository.findDishesByName(any())).thenReturn(Observable.just(MockDataHolder.listDishes.sortedBy { it.title }
+            .filter {
+                it.title.toLowerCase(Locale.ROOT).contains(
+                    "Чак".trim().toLowerCase(
+                        Locale.ROOT
+                    )
+                )
+            }))
         val testValue = useCase.findDishesByName("Мясная").test().values()
         Assertions.assertThat(testValue.size).isEqualTo(1)
         verify(repository).findDishesByName(any())

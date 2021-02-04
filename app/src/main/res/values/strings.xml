@@ -4,4 +4,5 @@
     <string name="search_title">Поиск</string>
     <string name="search_dishes_hint">Поиск блюд</string>
     <string name="btn_retry_error">Повторить</string>
+    <string name="basket_title">Корзина</string>
 </resources>

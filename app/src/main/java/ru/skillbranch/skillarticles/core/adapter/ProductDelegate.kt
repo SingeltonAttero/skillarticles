@@ -1,8 +1,10 @@
 package ru.skillbranch.skillarticles.core.adapter
 
 import androidx.core.view.setPadding
+import androidx.recyclerview.widget.DiffUtil
 import coil.load
-import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegatesManager
+import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.databinding.ItemProductBinding
@@ -10,7 +12,7 @@ import ru.skillbranch.skillarticles.databinding.ItemProductBinding
 class ProductDelegate {
 
     fun createAdapter(addClick: (ProductItemState) -> Unit) =
-        ListDelegationAdapter(productItem(addClick))
+        AsyncListDifferDelegationAdapter(ProductDiffUtils, AdapterDelegatesManager(productItem(addClick)))
 
 
     private fun productItem(addClick: (ProductItemState) -> Unit) =
@@ -32,4 +34,14 @@ class ProductDelegate {
             }
         }
 
+}
+
+object ProductDiffUtils : DiffUtil.ItemCallback<ProductItemState>() {
+    override fun areItemsTheSame(oldItem: ProductItemState, newItem: ProductItemState): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: ProductItemState, newItem: ProductItemState): Boolean {
+        return oldItem == newItem
+    }
 }

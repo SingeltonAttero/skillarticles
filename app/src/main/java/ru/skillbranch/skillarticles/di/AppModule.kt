@@ -7,6 +7,8 @@ import ru.skillbranch.skillarticles.core.notifier.BasketNotifier
 import ru.skillbranch.skillarticles.core.notifier.BasketNotifierImpl
 import ru.skillbranch.skillarticles.domain.SearchUseCase
 import ru.skillbranch.skillarticles.domain.SearchUseCaseImpl
+import ru.skillbranch.skillarticles.domain.filter.CategoriesFilter
+import ru.skillbranch.skillarticles.domain.filter.CategoriesFilterUseCase
 import ru.skillbranch.skillarticles.repository.DishesRepository
 import ru.skillbranch.skillarticles.repository.DishesRepositoryContract
 import ru.skillbranch.skillarticles.repository.database.DatabaseProvider
@@ -26,6 +28,7 @@ object AppModule {
         single<SearchUseCase> { SearchUseCaseImpl(get()) }
         single<DishesMapper> { DishesMapperImpl() }
         single<BasketNotifier> { BasketNotifierImpl() }
+        single<CategoriesFilter> { CategoriesFilterUseCase(get()) }
         single { CategoriesMapper() }
     }
 
@@ -35,7 +38,7 @@ object AppModule {
     }
 
     fun viewModelModule() = module {
-        viewModel { MainViewModel(repository = get(), dishesMapper = get(), categoriesMapper = get(), get()) }
+        viewModel { MainViewModel(repository = get(), dishesMapper = get(), categoriesMapper = get(), get(), get()) }
         viewModel { SearchViewModel(useCase = get(), mapper = get()) }
     }
 }

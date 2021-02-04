@@ -25,6 +25,7 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: MainViewModel by viewModel()
+    private var currentCategory: String = ""
     private val productAdapter by lazy {
         ProductDelegate().createAdapter {
             viewModel.handleAddBasket(it)
@@ -33,7 +34,8 @@ class MainFragment : Fragment() {
 
     private val categoriesAdapter by lazy {
         CategoriesDelegate().createAdapter {
-            // TODO handle click
+            currentCategory = it.categoryId
+            viewModel.loadDishes(categoryId = currentCategory)
         }
     }
 
@@ -44,6 +46,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.loadDishes(currentCategory)
         viewModel.state.observe(viewLifecycleOwner, ::renderState)
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
         setHasOptionsMenu(true)
@@ -52,7 +55,7 @@ class MainFragment : Fragment() {
         binding.rvCategories.addItemDecoration(GridPaddingItemDecoration(17))
         binding.rvProductGrid.addItemDecoration(GridPaddingItemDecoration(17))
         binding.btnRetry.setOnClickListener {
-            viewModel.loadDishes()
+            viewModel.loadDishes(currentCategory)
         }
         btnBasket.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
@@ -60,11 +63,11 @@ class MainFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+
     }
 
     private fun renderState(state: MainState) {
         binding.progressProduct.isVisible = state == MainState.Loader
-
         binding.rvProductGrid.isVisible = state is MainState.Result
         binding.rvCategories.isVisible = state is MainState.Result && state.categories.isNotEmpty()
         binding.toolbar.isVisible = state is MainState.Result
@@ -77,6 +80,8 @@ class MainFragment : Fragment() {
             productAdapter.notifyDataSetChanged()
         } else if (state is MainState.Error) {
             binding.tvErrorMessage.text = state.message
+            binding.rvCategories.isVisible = state.categories.isNotEmpty()
+            binding.btnRetry.isVisible = state.isRefresh
         }
     }
 

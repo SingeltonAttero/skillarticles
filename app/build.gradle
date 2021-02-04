@@ -54,6 +54,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:${versions_androidx_recyclerview}"
     implementation "androidx.cardview:cardview:${versions_androidx_cardview}"
     implementation "androidx.fragment:fragment-ktx:${versions_fragment}"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     //Room
     implementation "androidx.room:room-runtime:${versions_room}"
     annotationProcessor "androidx.room:room-compiler:${versions_room}"

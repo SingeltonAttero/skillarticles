@@ -10,6 +10,10 @@ import ru.skillbranch.skillarticles.MockDataHolder
 import ru.skillbranch.skillarticles.repository.DishesRepositoryContract
 import ru.skillbranch.skillarticles.repository.error.EmptyDishesError
 
+
+/**
+ *  группируем  продукты по категориям
+ **/
 class CategoriesFilterUseCaseTest {
 
     private val repository = mock<DishesRepositoryContract>()
